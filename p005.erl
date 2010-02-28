@@ -15,22 +15,15 @@
 %% http://basildoncoder.com/blog/2008/06/10/project-euler-problem-5/
 %% ---------------------
 
-find(Max) -> lists:foldl(fun lcm/2, 1, lists:seq(1, Max)).
+find(Max) -> lcm(lists:seq(1, Max)).
 
-lcm(A, B) -> (A * B) div gcd(A, B).
 
-gcd(A, B) when A < B -> gcd(B, A);
-gcd(A, 0) -> A;
-gcd(A, B) -> gcd(B, A rem B).
+%% Least common multiple of list of integers
+%%
+lcm(List) -> lists:foldl(fun mymath:lcm/2, 1, List).
 
 
 %% Tests
-
-gcd_test() ->
-    ?assertEqual(6, gcd(84, 18)).
-
-lcm_test() ->
-    ?assertEqual(12, lcm(4, 6)).
 
 find_10_test() ->
     ?assertEqual(2520, find(10)).
