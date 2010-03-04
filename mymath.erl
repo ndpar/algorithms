@@ -1,5 +1,5 @@
 -module(mymath).
--export([lcm/2, primes_upto/1]).
+-export([c/2, ds/1, factorial/1, lcm/2, primes_upto/1, prod/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 %% Find all prime numbers upto specified value.
@@ -51,6 +51,25 @@ gcd(A, 0) -> A;
 gcd(A, B) -> gcd(B, A rem B).
 
 
+%% Binomial coefficients
+%%
+c(N, N) -> 1;
+c(N, M) when M < N-M -> c(N, N-M);
+c(N, M) -> prod(lists:seq(M+1, N)) div factorial(N-M).
+
+
+%% Product of numbers in the list
+%%
+prod(List) -> lists:foldl(fun(X,Y) -> X*Y end, 1, List).
+
+factorial(N) -> prod(lists:seq(1,N)).
+
+
+%% Sum of digits in the given integer
+%%
+ds(M) -> lists:foldl(fun(N, Sum) -> Sum + N - $0 end, 0, integer_to_list(M)).
+
+
 %% Tests
 
 primes_upto_30_test() ->
@@ -70,3 +89,15 @@ lcm_test() ->
 
 gcd_test() ->
     ?assertEqual(6, gcd(84, 18)).
+
+prod_test() ->
+    ?assertEqual(90, prod([2,5,9])).
+
+c_test() ->
+    ?assertEqual(3, c(3, 1)).
+
+factorial_test() ->
+    ?assertEqual(120, factorial(5)).
+
+ds_test() ->
+    ?assertEqual(21, ds(1569)).
