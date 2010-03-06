@@ -7,16 +7,14 @@
 %% ---------------------
 
 -module(p001).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
 
+
+solve() -> lists:sum(multiples35(999)).
+
 multiples35(N) ->
-    [X || X <- lists:seq(1, N), (X rem 3 =:= 0) or (X rem 5 =:= 0)].
+    [ X || X <- lists:seq(1, N), (X rem 3 =:= 0) or (X rem 5 =:= 0) ].
 
 multiples35_test() ->
     ?assertEqual(466, length(multiples35(999))).
-
-result() ->
-    lists:sum(multiples35(999)).
-
-result_test() ->
-    ?assertEqual(233168, result()).

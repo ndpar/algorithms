@@ -4,6 +4,7 @@
 %% ---------------------
 
 -module(p008).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
 
 %% Solution
@@ -36,7 +37,7 @@ fivelets([A,B,C,D,E|Xs]) -> [[A,B,C,D,E]|fivelets([B,C,D,E|Xs])].
 
 prod(List) -> lists:foldl(fun(X, Prod) -> (X-$0) * Prod end, 1, List).
 
-find() -> lists:max(lists:map(fun prod/1, fivelets(number()))).
+solve() -> lists:max(lists:map(fun prod/1, fivelets(number()))).
 
 
 %% Tests
@@ -46,6 +47,3 @@ fivelets_test() ->
 
 prod_test() ->
     ?assertEqual(120, prod("12345")).
-
-find_test() ->
-    ?assertEqual(40824, find()).

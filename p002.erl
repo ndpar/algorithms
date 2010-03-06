@@ -8,12 +8,14 @@
 %% ---------------------
 
 -module(p002).
--include_lib("eunit/include/eunit.hrl").
+-export([solve1/0, solve2/0, solve3/0]).
 
-%% Solution
+%% Solution 1
 %% ---------------------
-%% Streight forward
+%% Basic brute force
 %% ---------------------
+
+solve1() -> fib(4000000).
 
 fib(Max) ->
     fib(1, 1, Max).
@@ -28,13 +30,13 @@ fib(Fst, Snd, Max, Acc) when Snd rem 2 =:= 0 ->
 fib(Fst, Snd, Max, Acc) ->
     fib(Snd, Fst+Snd, Max, Acc).
 
-fib_test() ->
-    ?assertEqual(4613732, fib(4000000)).
 
-%% Solution
+%% Solution 2
 %% ---------------------
 %% Found on Euler forum
 %% ---------------------
+
+solve2() -> fse(4000000).
 
 fse(Max) -> fse({1, 1}, Max, 0).
 
@@ -42,19 +44,16 @@ fse({P1, P2}, Max, T) when (P1 + P2) < Max ->
     fse({P1 + 2 * P2, 2 * P1 + 3 * P2}, Max, T + P1 + P2);
 fse({P1, P2}, Max, T) when (P1 + P2) >= Max -> T.
 
-fse_test() ->
-    ?assertEqual(4613732, fse(4000000)).
 
-%% Solution
+%% Solution 3
 %% ---------------------
 %% 2 8 34 144...
 %% E(n) = 4*E(n-1) + E(n-2)
 %% ---------------------
 
+solve3() -> f(4000000).
+
 f(M) -> f(2, 8, M, 10).
 
 f(A, B, Max, R) when A + 4*B > Max -> R;
 f(A, B, Max, R) -> f(B, A + 4*B, Max, R + A + 4*B).
-
-f_test() ->
-    ?assertEqual(4613732, f(4000000)).

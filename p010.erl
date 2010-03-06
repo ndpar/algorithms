@@ -5,12 +5,10 @@
 %% Find the sum of all the primes below two million.
 %% ---------------------
 
--module(p010). 
--include_lib("eunit/include/eunit.hrl").
+-module(p010).
+-export([solve/0]).
 
-sum_primes(N) -> lists:sum(mymath:primes_upto(N)). 
 
-% Tests
+solve() -> sum_primes(2000000).
 
-sum_primes_test() ->
-    ?assertEqual(142913828922, sum_primes(2000000)).
+sum_primes(N) -> lists:sum(mymath:primes_upto(N)).

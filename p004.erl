@@ -7,14 +7,13 @@
 %% ---------------------
 
 -module(p004).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
 
-%% Solution
-%% ---------------------
-%% Brute force
+%% Brute force solution
 %% ---------------------
 
-find_largest_palindrome() ->
+solve() ->
     lists:max(palindromes(lists:seq(100, 999))).
 
 palindromes(Factors) ->
@@ -32,6 +31,3 @@ is_palindrome_true_test() ->
 
 is_palindrome_false_test() ->
     ?assertEqual(false, is_palindrome(9001)).
-
-find_test() ->
-    ?assertEqual(906609, find_largest_palindrome()).

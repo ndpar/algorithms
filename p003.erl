@@ -5,6 +5,7 @@
 %% ---------------------
 
 -module(p003).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
 
 %% Solution
@@ -12,6 +13,8 @@
 %% Inspired by:
 %% http://thetaoishere.blogspot.com/2008/05/largest-prime-factor-of-number.html
 %% ---------------------
+
+solve() -> lpf(600851475143).
 
 lpf(1) -> 1;
 lpf(2) -> 2;
@@ -42,6 +45,3 @@ lpf_20_test() ->
 
 lpf_17_test() ->
     ?assertEqual(17, lpf(17)).
-
-problem_test() ->
-    ?assertEqual(6857, lpf(600851475143)).

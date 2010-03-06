@@ -12,9 +12,13 @@
 %% ---------------------
 
 -module(p006).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
 
-%% Solution (long)
+
+solve() -> diff2(100).
+
+%% Solution (slow)
 %% ---------------------
 
 diff(Max) -> 2 * lists:sum([M * N || M <- lists:seq(1, Max), N <- lists:seq(1, Max), M < N]).
@@ -38,6 +42,3 @@ diff_10_test() ->
 
 diff_100_test() ->
     ?assertEqual(25164150, diff(100)).
-
-diff2_100_test() ->
-    ?assertEqual(25164150, diff2(100)).

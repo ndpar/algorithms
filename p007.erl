@@ -7,7 +7,11 @@
 %% ---------------------
 
 -module(p007).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
+
+
+solve() -> find_prime(10001).
 
 %% Solution
 %% ---------------------
@@ -32,9 +36,6 @@ find_prime_10_test() ->
 
 upper_bound_estimate_test() ->
     ?assertEqual(114319, upper_bound_estimate(10001)).
-
-find_prime_10001_test() ->
-    ?assertEqual(104743, find_prime(10001)).
 
 
 %% See also:

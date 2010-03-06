@@ -8,7 +8,11 @@
 %% ---------------------
 
 -module(p009).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
+
+
+solve() -> triplets(1000).
 
 %% Solution
 %% ---------------------
@@ -26,6 +30,3 @@ triplets(P) ->
 
 triplets_12_test() ->
     ?assertEqual([{3,4,5}], triplets(12)).
-
-triplets_k_test() ->
-    ?assertEqual([{200,375,425}], triplets(1000)).

@@ -7,7 +7,11 @@
 %% ---------------------
 
 -module(p005).
+-export([solve/0]).
 -include_lib("eunit/include/eunit.hrl").
+
+
+solve() -> find(20).
 
 %% Solution
 %% ---------------------
@@ -28,8 +32,6 @@ lcm(List) -> lists:foldl(fun mymath:lcm/2, 1, List).
 find_10_test() ->
     ?assertEqual(2520, find(10)).
 
-find_20_test() ->
-    ?assertEqual(232792560, find(20)).
 
 %% Solution from bitRAKE
 %% ---------------------
