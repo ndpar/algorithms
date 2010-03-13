@@ -8,7 +8,6 @@
 
 -module(p004).
 -export([solve/0]).
--include_lib("eunit/include/eunit.hrl").
 
 %% Brute force solution
 %% ---------------------
@@ -17,17 +16,4 @@ solve() ->
     lists:max(palindromes(lists:seq(100, 999))).
 
 palindromes(Factors) ->
-    [M * N || M <- Factors, N <- Factors, is_palindrome(M * N)].
-
-is_palindrome(N) ->
-    Nl = integer_to_list(N),
-    Nl =:= lists:reverse(Nl).
-
-
-%% Tests
-
-is_palindrome_true_test() ->
-    ?assertEqual(true, is_palindrome(9009)).
-
-is_palindrome_false_test() ->
-    ?assertEqual(false, is_palindrome(9001)).
+    [M * N || M <- Factors, N <- Factors, mymath:is_palindrome(M * N)].

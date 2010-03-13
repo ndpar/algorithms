@@ -19,14 +19,8 @@ solve() -> find(1000000, "0123456789").
 
 %% Brute force works relatively fast.
 %%
-find(Nth, List) -> lists:nth(Nth, perms(List)).
+find(Nth, List) -> lists:nth(Nth, mymath:perms(List)).
 
-perms([]) -> [[]];
-perms(L) -> [[H|T] || H <- L, T <- perms(L--[H])].
-
-
-perms_test() ->
-    ?assertEqual(["012", "021", "102", "120", "201", "210"], perms("012")).
 
 find_test() ->
     ?assertEqual("120", find(4, "012")).

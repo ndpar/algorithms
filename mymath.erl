@@ -1,5 +1,5 @@
 -module(mymath).
--export([c/2, ds/1, factorial/1, lcm/2, primes_upto/1, prod/1]).
+-export([c/2, ds/1, factorial/1, is_palindrome/1, lcm/2, perms/1, pow/2, primes_upto/1, prod/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 %% Find all prime numbers upto specified value.
@@ -60,14 +60,34 @@ c(N, M) -> prod(lists:seq(M+1, N)) div factorial(N-M).
 
 %% Product of numbers in the list
 %%
-prod(List) -> lists:foldl(fun(X,Y) -> X*Y end, 1, List).
+prod(List) -> lists:foldl(fun erlang:'*'/2, 1, List).
 
+factorial(0) -> 1;
 factorial(N) -> prod(lists:seq(1,N)).
 
 
 %% Sum of digits in the given integer
 %%
 ds(M) -> lists:foldl(fun(N, Sum) -> Sum + N - $0 end, 0, integer_to_list(M)).
+
+
+%% Integer power of another integer
+%%
+pow(N, 1) -> N;
+pow(N, E) -> N * pow(N, E-1).
+
+
+%% Calculates all permutations for elements from given list
+%%
+perms([]) -> [[]];
+perms(L) -> [[H|T] || H <- L, T <- perms(L--[H])].
+
+
+%% Returns true if given list or integer is palindrom
+%%
+is_palindrome([]) -> [];
+is_palindrome([X|Xs]) -> [X|Xs] =:= lists:reverse([X|Xs]);
+is_palindrome(N) -> is_palindrome(integer_to_list(N)).
 
 
 %% Tests
@@ -101,3 +121,21 @@ factorial_test() ->
 
 ds_test() ->
     ?assertEqual(21, ds(1569)).
+
+pow_test() ->
+    ?assertEqual(32, pow(2, 5)).
+
+perms_test() ->
+    ?assertEqual(["012", "021", "102", "120", "201", "210"], perms("012")).
+
+is_palindrome_int_true_test() ->
+    ?assertEqual(true, is_palindrome(9009)).
+
+is_palindrome_int_false_test() ->
+    ?assertEqual(false, is_palindrome(9001)).
+
+is_palindrome_list_true_test() ->
+    ?assertEqual(true, is_palindrome("1001001001")).
+
+is_palindrome_list_false_test() ->
+    ?assertEqual(false, is_palindrome("1001001011")).
