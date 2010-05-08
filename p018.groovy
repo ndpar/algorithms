@@ -1,5 +1,6 @@
 // inspired by
 // http://blog.dreamshire.com/2009/04/01/project-euler-problem-18-solution
+// See also http://en.wikipedia.org/wiki/Dynamic_programming
 
 // to solve problem 67 replace file name to triangle67.txt
 

@@ -1,5 +1,6 @@
 -module(mymath).
--export([c/2, ds/1, factorial/1, is_palindrome/1, lcm/2, perms/1, pow/2, primes_upto/1, prod/1]).
+-export([c/2, ds/1, factorial/1, factorisation/1, factorisation/3, is_palindrome/1]).
+-export([lcm/2, perms/1, pow/2, primes_upto/1, prod/1, ufactorisation/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 %% Find all prime numbers upto specified value.
@@ -90,6 +91,16 @@ is_palindrome([X|Xs]) -> [X|Xs] =:= lists:reverse([X|Xs]);
 is_palindrome(N) -> is_palindrome(integer_to_list(N)).
 
 
+%% Factorisation of given integer N
+%%
+factorisation(N) -> factorisation(N, primes_upto(N), []).
+factorisation(1, _, Acc) -> Acc;
+factorisation(N, [P|Ps], Acc) when N rem P =:= 0 -> factorisation(N div P, [P|Ps], [P|Acc]);
+factorisation(N, [_|Ps], Acc) -> factorisation(N, Ps, Acc).
+
+ufactorisation(N) -> lists:usort(factorisation(N)).
+
+
 %% Tests
 
 primes_upto_30_test() ->
@@ -118,6 +129,12 @@ c_test() ->
 
 factorial_test() ->
     ?assertEqual(120, factorial(5)).
+
+factorisation_test() ->
+    ?assertEqual([3,2,2,2], factorisation(24)).
+
+ufactorisation_test() ->
+    ?assertEqual([2,3], ufactorisation(24)).
 
 ds_test() ->
     ?assertEqual(21, ds(1569)).
