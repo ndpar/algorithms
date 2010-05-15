@@ -132,16 +132,17 @@ assert [1,2,3,4,5,6,7,8] == heapsort([6,1,5,3,8,7,4,2])
 
 /*
  * http://en.wikipedia.org/wiki/Insertion_sort
+ * CLRS, p. 26. Worst case Θ(n2)
  */
 def insertionSort(list) {
     for (int i in 1..<list.size()) {
-        int c = i
-        while (0 < c) {
-            if (list[c] < list[c-1]) {
-                swap(list, c-1, c)
-                c = c - 1
-            } else break
+        def key = list[i]
+        int j = i - 1
+        while (0 <= j && key < list[j]) {
+            list[j + 1] = list[j]
+            j = j - 1
         }
+        list[j + 1] = key
     }
     list
 }
@@ -151,7 +152,30 @@ assert [1,2,3,4,5,6,7,8] == insertionSort([6,1,5,3,8,7,4,2])
 
 
 /*
+ * http://en.wikipedia.org/wiki/Selection_sort
+ */
+def selectionSort(list) {
+    for (int i in 0..<list.size()) {
+        int index = i
+        def min = list[i]
+        for (int j in i..<list.size()) {
+            if (list[j] < min) {
+                min = list[j]
+                index = j
+            }
+        }
+        swap(list, i, index)
+    }
+    list
+}
+
+assert [1,2,3,4,5,6,7,8] == selectionSort([6,1,5,3,8,7,4,2])
+
+
+
+/*
  * http://en.wikipedia.org/wiki/Selection_algorithm
+ * Random select. O(n) expected running time. O(n2) worst case
  */
 def select(list, p, q, i) {
     if (p == q) return list[p]
@@ -187,6 +211,11 @@ assert 4 == median([6,1,5,3,8,7,4,2])
 
 
 
+// ------------------------------------------------------------------
+// Outside of comparison sort algorithms
+// http://www.catonmat.net/blog/mit-introduction-to-algorithms-part-three
+// ------------------------------------------------------------------
+
 /*
  * http://en.wikipedia.org/wiki/Counting_sort
  */
@@ -206,3 +235,47 @@ def countingSort(list) {
 }
 
 assert [3,4,4,5,6,7] == countingSort([7,3,6,4,5,4])
+
+
+
+/*
+ * http://en.wikipedia.org/wiki/Radix_sort
+ */
+def radixSort(list) {
+    int passes = maxItemLength(list)
+    def result = list
+    (1..passes).each { digit ->
+        result = mergeBuckets(splitToBuckets(result, digit))
+    }
+    result
+}
+
+int maxItemLength(list) {
+    def max = Integer.MIN_VALUE
+    list.each { if (max < it) max = it }
+    Math.ceil(Math.log10(max+1)) as int
+}
+
+def splitToBuckets(list, k) {
+    def buckets = emptyBuckets(10)
+    list.each { buckets[getDigit(it, k)] << it }
+    buckets
+}
+
+def emptyBuckets(k) {
+    def buckets = new LinkedList[10]
+    (0..<k).each { buckets[it] = new LinkedList() }
+    buckets
+}
+
+int getDigit(number, k) {
+    number.intdiv(10**(k-1)).mod(10)
+}
+
+def mergeBuckets(buckets) {
+    def result = []
+    buckets.each { result += it }
+    result
+}
+
+assert [2,24,45,66,75,90,170,802] == radixSort([170,45,75,90,2,24,802,66])
