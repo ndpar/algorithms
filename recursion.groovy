@@ -87,6 +87,52 @@ assert [1,2,3,4,5,6,7,8] == mergeSort([6,1,5,3,8,7,4,2])
 
 
 /*
+ * Calculates number of inversions in Θ(n log n) worst-case time.
+ * CLRS, Problem 2-4.d, p. 42.
+ * Modified merge sort with sentinels.
+ */
+def inversionCount(list) {
+    inversionCount(list, 0, list.size() - 1)
+}
+
+def inversionCount(list, p, r) {
+    int result = 0
+    if (p < r) {
+        def q = (p + r).intdiv(2)
+        result += inversionCount(list, p, q)
+        result += inversionCount(list, q + 1, r)
+        result += inversionMerge(list, p, q, r)
+    }
+    result
+}
+
+def inversionMerge(list, p, q, r) {
+    def left = cloneList(list, p, q) + [Integer.MAX_VALUE]
+    def right = cloneList(list, q + 1, r) + [Integer.MAX_VALUE]
+    int result = i = j = 0
+    for (int k in p..r) {
+        if (left[i] <= right[j]) {
+            list[k] = left[i++]
+        } else {
+            list[k] = right[j++]
+            result += left.size() - i - 1
+        }
+    }
+    result
+}
+
+def cloneList(list, p, r) {
+    def clone = []
+    (p..r).each { clone << list[it] }
+    clone
+}
+
+assert 5 == inversionCount([2,3,8,6,1])
+assert 10 == inversionCount([5,4,3,2,1]) // n(n-1)/2
+
+
+
+/*
  * http://en.wikipedia.org/wiki/Heapsort
  * http://datastructurefaqs.blogspot.com/2009/01/sorting-techniques-with-algorithm.html
  * No recursion actually
