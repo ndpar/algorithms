@@ -135,7 +135,6 @@ assert 10 == inversionCount([5,4,3,2,1]) // n(n-1)/2
 /*
  * http://en.wikipedia.org/wiki/Heapsort
  * http://datastructurefaqs.blogspot.com/2009/01/sorting-techniques-with-algorithm.html
- * No recursion actually
  */
 def heapsort(list) {
     heapsort(list, list.size())
@@ -152,6 +151,7 @@ def heapsort(list, count) {
     list
 }
 
+/* O(n) running time */
 def heapify(list, count) {
     def start = (count - 2).intdiv(2)
     while (0 <= start) {
@@ -160,6 +160,7 @@ def heapify(list, count) {
     }
 }
 
+/* No recursion. CLRS, p.156, 6.2-5. O(log n) running time */
 def siftDown(list, start, end) {
     def root = start
     while (root*2 + 1 <= end) {

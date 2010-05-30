@@ -6,12 +6,11 @@
 
 -module(fibonacci).
 -export([naive_recursive/1, bottom_up/1, squaring/1]).
--export([parallel_power/2, parallel_loop/3, parallel_squaring/1]).
 
 -include_lib("eunit/include/eunit.hrl").
 
 % Exponential:
-% T(n) = Ω(Φ^n), Φ is Golden section
+% T(n) = Ω(Φ^n), Φ is Golden ratio
 
 naive_recursive(0) -> 0;
 naive_recursive(1) -> 1;
@@ -39,7 +38,8 @@ squaring(N) -> [_,X,X,_] = power([1,1,1,0], N), X.
 
 squaring_test() -> ?assertEqual(8, squaring(6)).
 
-% A^n; logarithmic algorithm
+
+% Matrix exponentiation A^n; logarithmic algorithm Θ(log n)
 
 power(Matrix, 1) -> Matrix;
 power(Matrix, N) when N rem 2 =:= 0 ->
