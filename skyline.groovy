@@ -7,6 +7,9 @@
  */
 import static Operation.*
 
+@Grab(group='com.google.guava', module='guava', version='r05')
+import com.google.common.collect.TreeMultiset as Tree
+
 /*
  * To implement the algorithm we need two data structures:
  * - min-heap to store insert-remove events, and
@@ -14,20 +17,16 @@ import static Operation.*
  */
 
 class MaxIntegerList {
-    private List<Integer> list // TODO: replace by BST
+    private Tree<Integer> list = new Tree<Integer>()
 
-    MaxIntegerList(int initialCapacity) {
-        list = new ArrayList<Integer>(initialCapacity)
-    }
     boolean add(Integer i) {
         list << i
     }
     Integer max() {
-        list.max()
+        list.elementSet() ? list.elementSet().last() : null
     }
     def remove(Integer i) {
-        int index = list.indexOf(i)
-        index < 0 ? null : list.remove(index)
+        list.remove i
     }
 }
 
@@ -73,8 +72,7 @@ class MinEventHeap {
  * Main algorithm
  */
 def skyline(buildings) {
-    def eventHeap = buildEventHeap(buildings)
-    processEvents(eventHeap, new MaxIntegerList(buildings.size()))
+    processEvents(buildEventHeap(buildings))
 }
 
 def buildEventHeap(buildings) {
@@ -86,7 +84,8 @@ def buildEventHeap(buildings) {
     result
 }
 
-def processEvents(eventHeap, heights) {
+def processEvents(eventHeap) {
+    def heights = new MaxIntegerList()
     def result = []
     int x = Integer.MIN_VALUE, height = 0
     while ((event = eventHeap.extractMin()) != null) {

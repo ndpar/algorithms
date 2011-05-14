@@ -23,9 +23,9 @@ naive_recursive_test() -> ?assertEqual(8, naive_recursive(6)).
 % T(n) = Θ(n)
 % Dynamic programming technique
 
-bottom_up(N) -> bottom_up2(N, 1, {1,0}).
-bottom_up2(N, N, {X,_}) -> X;
-bottom_up2(N, M, {X,Y}) -> bottom_up2(N, M+1, {X+Y,X}).
+bottom_up(N) -> bottom_up(N, 1, {1,0}).
+bottom_up(N, N, {X,_}) -> X;
+bottom_up(N, M, {X,Y}) -> bottom_up(N, M+1, {X+Y,X}).
 
 bottom_up_test() -> ?assertEqual(8, bottom_up(6)).
 
