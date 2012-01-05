@@ -4,31 +4,14 @@
  *
  * Sweep Line Algorithm
  * http://www.algorithmist.com/index.php/UVa_105
- */
-import static Operation.*
-
-@Grab(group='com.google.guava', module='guava', version='r05')
-import com.google.common.collect.TreeMultiset as Tree
-
-/*
+ *
  * To implement the algorithm we need two data structures:
  * - min-heap to store insert-remove events, and
- * - balanced binary search tree to store building heights
+ * - max-heap to store building heights.
+ *
+ * With these data structures the running time of the algorithm is O(n log n).
  */
-
-class MaxIntegerList {
-    private Tree<Integer> list = new Tree<Integer>()
-
-    boolean add(Integer i) {
-        list << i
-    }
-    Integer max() {
-        list.elementSet() ? list.elementSet().last() : null
-    }
-    def remove(Integer i) {
-        list.remove i
-    }
-}
+import static Operation.*
 
 enum Operation {
     INSERT, REMOVE
@@ -40,64 +23,54 @@ class Event {
     Operation operation
 }
 
-class MinEventHeap {
-    private PriorityQueue<Event> queue
-
-    MinEventHeap(int initialCapacity) {
-        queue = new PriorityQueue<Event>(initialCapacity, new EventComporator())
-    }
-    boolean insert(Event i) {
-        queue.add i
-    }
-    Event extractMin() {
-        queue.poll()
-    }
-    int size() {
-        queue.size()
-    }
-    static class EventComporator implements Comparator<Event> {
-        int compare(Event p, Event q) {
-            if (p.coordinate != q.coordinate) return p.coordinate.compareTo(q.coordinate)
-            if (p.operation == INSERT && q.operation == INSERT) return q.height.compareTo(p.height)
-            if (p.operation == REMOVE && q.operation == REMOVE) return p.height.compareTo(q.height)
-            p.operation == INSERT ? -1 : 1
-        }
-        boolean equals(Object o) {
-            return o instanceof EventComporator
-        }
+/*
+ * The core of the algorithm is to sort all events properly.
+ * With sorted events, the rest of the algorithm is pretty simple.
+ */
+class EventComporator implements Comparator<Event> {
+    int compare(Event p, Event q) {
+        if (p.coordinate != q.coordinate) return p.coordinate.compareTo(q.coordinate)
+        if (p.operation == INSERT && q.operation == INSERT) return q.height.compareTo(p.height)
+        if (p.operation == REMOVE && q.operation == REMOVE) return p.height.compareTo(q.height)
+        p.operation == INSERT ? -1 : 1
     }
 }
 
 /*
- * Main algorithm
+ * Main algorithm.
  */
 def skyline(buildings) {
     processEvents(buildEventHeap(buildings))
 }
 
+/*
+ * Insert 2n entries into min-heap.
+ * Running time is O(n log n)
+ */
 def buildEventHeap(buildings) {
-    def result = new MinEventHeap(2 * buildings.size())
-    buildings.each { // it = [x1, height, x2]
-        result.insert(new Event(coordinate: it[0], height: it[1], operation: INSERT))
-        result.insert(new Event(coordinate: it[2], height: it[1], operation: REMOVE))
+    def result = new PriorityQueue<Event>(2 * buildings.size(), new EventComporator())
+    buildings.each { // it = [left_coordinate, height, right_coordinate]
+        result << new Event(coordinate: it[0], height: it[1], operation: INSERT)
+        result << new Event(coordinate: it[2], height: it[1], operation: REMOVE)
     }
     result
 }
 
+/*
+ * Loop through the event heap and check if the height is being changed.
+ * If so, add event's coordinate and height to the result list.
+ * Running time is O(n log n).
+ */
 def processEvents(eventHeap) {
-    def heights = new MaxIntegerList()
+    def heights = new PriorityQueue<Integer>(eventHeap.size(), {n,m -> m.compareTo(n)} as Comparator)
     def result = []
-    int x = Integer.MIN_VALUE, height = 0
-    while ((event = eventHeap.extractMin()) != null) {
-        // 1. Process event
-        event.operation == INSERT ? heights.add(event.height) : heights.remove(event.height)
-        // 2. Get maximum height
-        def h = heights.max() ?: 0
-        // 3. Add new output on height change
-        if (height != h) {
-            x = event.coordinate
-            height = h
-            result << x << height
+    int lastMaxHeight = 0
+    while ((event = eventHeap.poll()) != null) { // 2n * O(log n)
+        event.operation == INSERT ? heights.add(event.height) : heights.remove(event.height) // O(log n)
+        int currentMaxHeight = heights.peek() ?: 0 // O(1)
+        if (lastMaxHeight != currentMaxHeight) {
+            result << event.coordinate << currentMaxHeight
+            lastMaxHeight = currentMaxHeight
         }
     }
     result
