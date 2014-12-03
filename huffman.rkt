@@ -37,18 +37,16 @@
 (define (node<=? x y)
   (<= (weight x) (weight y)))
 
+(define-syntax-rule (while test body ...)
+  (let loop () (when test body ... (loop))))
+
 (define (leaf-vector->huffman-tree leaves)
-  (let ([leaf-heap (h:vector->heap node<=? leaves)])
-    (let iter ([leaf-heap leaf-heap])
-      (if (= 1 (h:heap-count leaf-heap))
-          (h:heap-min leaf-heap)
-          (let ([first (h:heap-min leaf-heap)])
-            (h:heap-remove-min! leaf-heap)
-            (let ([second (h:heap-min leaf-heap)])
-              (h:heap-remove-min! leaf-heap)
-              (h:heap-add! leaf-heap
-                           (make-tree first second))
-              (iter leaf-heap)))))))
+  (define (pop! heap)
+    (let ([min (h:heap-min heap)]) (h:heap-remove-min! heap) min))
+  (let ([heap (h:vector->heap node<=? leaves)])
+    (while (< 1 (h:heap-count heap))
+      (h:heap-add! heap (make-tree (pop! heap) (pop! heap))))
+    (h:heap-min heap)))
 
 (define sample-tree
   (leaf-vector->huffman-tree (vector (leaf 'A 4) (leaf 'B 2) (leaf 'C 1) (leaf 'D 1) )))
