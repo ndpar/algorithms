@@ -62,8 +62,8 @@ def buildEventHeap(buildings) {
  * Running time is O(n log n).
  */
 def processEvents(eventHeap) {
-    def heights = new PriorityQueue<Integer>(eventHeap.size(), {n,m -> m.compareTo(n)} as Comparator)
     def result = []
+    def heights = new PriorityQueue<Integer>(eventHeap.size(), {n,m -> m.compareTo(n)} as Comparator)
     int lastMaxHeight = 0
     while ((event = eventHeap.poll()) != null) { // 2n * O(log n)
         event.operation == INSERT ? heights.add(event.height) : heights.remove(event.height) // O(log n)
