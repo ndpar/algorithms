@@ -34,22 +34,29 @@
 
 (require (prefix-in h: data/heap))
 
-(define (node<=? x y)
-  (<= (weight x) (weight y)))
+(define ((& f g) x y) ; J compose
+  (f (g x) (g y)))
 
 (define-syntax-rule (while test body ...)
   (let loop () (when test body ... (loop))))
 
-(define (leaf-vector->huffman-tree leaves)
+(define (leaves->huffman-tree leaves)
   (define (pop! heap)
     (let ([min (h:heap-min heap)]) (h:heap-remove-min! heap) min))
-  (let ([heap (h:vector->heap node<=? leaves)])
+  (let ([heap (h:make-heap (& <= weight))])
+    (h:heap-add-all! heap leaves)
     (while (< 1 (h:heap-count heap))
       (h:heap-add! heap (make-tree (pop! heap) (pop! heap))))
     (h:heap-min heap)))
 
+(define (map-apply f lists)
+  (map (curry apply f) lists))
+
+(define (make-huffman-tree frequencies)
+  (leaves->huffman-tree (map-apply leaf frequencies)))
+
 (define sample-tree
-  (leaf-vector->huffman-tree (vector (leaf 'A 4) (leaf 'B 2) (leaf 'C 1) (leaf 'D 1) )))
+  (make-huffman-tree '((A 4) (B 2) (D 1) (C 1))))
 
 (module+ test
   (require rackunit)
@@ -59,7 +66,7 @@
 
 ;; Decoding messages
 
-(define (decode bits tree)
+(define (decode tree bits)
   (define (choose-branch bit branch)
     (cond [(= 0 bit) (tree-left branch)]
           [(= 1 bit) (tree-right branch)]
@@ -75,7 +82,10 @@
 
 ;; Encoding messages
 
-(define (encode-symbol symbol tree)
+(define (encode tree message)
+  (append-map (curry encode-symbol tree) message))
+
+(define (encode-symbol tree symbol)
   (let iter ([result '()] [tree tree])
     (if (leaf? tree)
         (if (eq? symbol (leaf-symbol tree))
@@ -87,23 +97,11 @@
             (iter (cons 0 result) (tree-left tree))
             (iter (cons 1 result) (tree-right tree))))))
 
-(define (flatmap f seq)
-  (apply append (map f seq)))
-
-(define (encode message tree)
-  (flatmap (λ (s) (encode-symbol s tree)) message))
-
 ;; Tests
 
 (define sample-message '(A D A B B C A))
-(define sample-cipher '(0 1 1 0 0 1 0 1 0 1 1 1 0))
+(define sample-bits '(0 1 1 0 0 1 0 1 0 1 1 1 0))
 
 (module+ test
-  (check-equal?
-   (decode sample-cipher sample-tree)
-   sample-message))
-
-(module+ test
-  (check-equal?
-   (encode sample-message sample-tree)
-   sample-cipher))
+  (check-equal? (decode sample-tree sample-bits) sample-message)
+  (check-equal? (encode sample-tree sample-message) sample-bits))
